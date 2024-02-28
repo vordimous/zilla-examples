@@ -13,6 +13,7 @@ services:
     environment:
       KEYSTORE_PASSWORD: generated
       KAFKA_HOST: ${KAFKA_HOST}
+      JAVA_OPTIONS: "-Dzilla.binding.kafka.debug=true"
       KAFKA_PORT: ${KAFKA_PORT}
     volumes:
       - ../../zilla.yaml:/etc/zilla/zilla.yaml

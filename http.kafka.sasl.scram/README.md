@@ -133,3 +133,16 @@ release "zilla-http-kafka-sasl-scram-kafka" uninstalled
 + kubectl delete namespace zilla-http-kafka-sasl-scram
 namespace "zilla-http-kafka-sasl-scram" deleted
 ```
+
+docker run --rm --user root bitnami/kafka:3.2 bash -c '
+cat <<EOT >> client.properties
+security.protocol=SASL_SSL
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="aklivity" password="akl1v!ty";
+sasl.mechanism=SCRAM-SHA-256
+EOT
+
+/opt/bitnami/kafka/bin/kafka-topics.sh --list \
+--command-config client.properties --bootstrap-server cmtvegmslckj1iv14qv0.any.us-east-1.mpx.prd.cloud.redpanda.com:30092
+/opt/bitnami/kafka/bin/kafka-console-consumer.sh --topic mqtt-messages --from-beginning \
+--consumer.config client.properties --bootstrap-server cmtvegmslckj1iv14qv0.any.us-east-1.mpx.prd.cloud.redpanda.com:30092
+'
