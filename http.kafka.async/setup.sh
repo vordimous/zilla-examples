@@ -5,6 +5,12 @@ set -ex
 ZILLA_CHART="${ZILLA_CHART:-oci://ghcr.io/aklivity/charts/zilla}"
 ZILLA_VERSION="${ZILLA_VERSION:-^0.9.0}"
 NAMESPACE="${NAMESPACE:-zilla-http-kafka-async}"
+
+# Install an ingress controller
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace $NAMESPACE --create-namespace --wait
+
 helm upgrade --install zilla $ZILLA_CHART --version $ZILLA_VERSION --namespace $NAMESPACE --create-namespace --wait \
     --values values.yaml \
     --set-file zilla\\.yaml=zilla.yaml \
@@ -29,7 +35,6 @@ kubectl exec --namespace $NAMESPACE "$KAFKA_POD" -- \
         --if-not-exists
 
 # Start port forwarding
-kubectl port-forward --namespace $NAMESPACE service/zilla 7114 7143 > /tmp/kubectl-zilla.log 2>&1 &
 kubectl port-forward --namespace $NAMESPACE service/kafka 9092 29092 > /tmp/kubectl-kafka.log 2>&1 &
 until nc -z localhost 7114; do sleep 1; done
 until nc -z localhost 7143; do sleep 1; done

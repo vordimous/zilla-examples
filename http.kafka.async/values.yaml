@@ -12,3 +12,11 @@ service:
       name: http
     - port: 7143
       name: https
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: localhost
+  paths:
+    - path: /
+      port: 7114
+      pathType: Prefix
